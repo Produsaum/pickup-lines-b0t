@@ -1,1 +1,17 @@
-
+{
+  "name": "pickup-lines-bot",
+  "version": "1.0.0",
+  "description": "ChatGPT-style pickup lines bot",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "socket.io": "^4.4.1",
+    "path": "^0.12.7"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
