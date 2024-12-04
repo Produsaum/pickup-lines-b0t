@@ -3,20 +3,25 @@ const App = () => {
   const [input, setInput] = React.useState('');
   const [isTyping, setIsTyping] = React.useState(false);
   const messagesEndRef = React.useRef(null);
+  const socketRef = React.useRef(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   React.useEffect(() => {
-    const socket = io();
+    // Inicializa o socket uma única vez
+    socketRef.current = io('/', {
+      reconnectionDelayMax: 10000,
+      transports: ['websocket', 'polling']
+    });
     
-    socket.on('newMessage', (line) => {
+    socketRef.current.on('newMessage', (line) => {
       setIsTyping(false);
       setMessages(prev => [...prev, { ...line, sender: 'bot' }]);
     });
 
-    return () => socket.disconnect();
+    return () => socketRef.current.disconnect();
   }, []);
 
   React.useEffect(() => {
@@ -27,14 +32,12 @@ const App = () => {
     e.preventDefault();
     const message = input.trim() || 'create the BEST pickup lines ever';
     
-    // Adiciona mensagem do usuário
     setMessages(prev => [...prev, { text: message, sender: 'user' }]);
     setInput('');
     setIsTyping(true);
 
-    // Emite evento para o servidor
-    const socket = io();
-    socket.emit('getMessage');
+    // Usa a referência do socket existente
+    socketRef.current.emit('getMessage');
   };
 
   return (
