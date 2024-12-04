@@ -1,10 +1,16 @@
 const express = require('express');
 const app = express();
-const http = require('http').Server(app);
-const io = require('socket.io')(http);
-const path = require('path');
+const http = require('http').createServer(app);
+const { Server } = require('socket.io');
+const io = new Server(http, {
+  cors: {
+    origin: '*',
+    methods: ['GET', 'POST']
+  },
+  transports: ['websocket', 'polling']
+});
 
-app.use(express.static('public'));
+const path = require('path');
 
 const pickupLines = [
   {text: "Are you my internet history? Because I want you all to myself and can't delete you from my mind", effect: "💻 Chrome has stopped working"},
